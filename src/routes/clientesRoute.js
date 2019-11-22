@@ -7,5 +7,7 @@ router.post('/', controller.post)
 router.get('/', controller.get)
 router.get('/compradoras', controller.getCompradoras)
 router.get('/:cpf', controller.getClienteCpf)
+router.put('/:cpf', controller.updateCliente)
+router.delete('/:id', controller.deletarCliente)
 
 module.exports = router;

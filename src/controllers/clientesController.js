@@ -1,5 +1,5 @@
 const Clientes = require('../models/clientes');
-
+const Joi = require('joi');
 const fs = require('fs');
 
 exports.get = (req, res) => {
@@ -60,4 +60,33 @@ exports.getClienteCpf = (req, res) => {
 
         res.status(200).send(cliente)
     })
+}
+const valida = (campos) => {
+    const schema = {
+        nome: Joi.string().min(1).required(),
+        email: Joi.string().min(1).required(),
+    }
+    const validation = Joi.validate(campos, schema);
+    if (validation.error) {
+        return false
+    }
+    return true;
+}
+
+exports.updateCliente = (req, res) => {
+    if (!valida(req.body)) return res.status(400).send('Campos inválidos')
+
+    Clientes.update(
+        { cpf: req.params.cpf },
+        { $set: req.body },
+        { upsert: true },
+        function (err) {
+            if (err) return res.status(500).send(err)
+            res.status(200).send({ mensagem: "Atualizado com sucesso" })
+        }
+    )
+}
+
+exports.deletarCliente = (req, res) =>{
+    const idCliente
 }
