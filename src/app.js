@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 const bodyParser = require('body-parser');
 
-mongoose.connect("mongodb://localhost:27017/clientes", {useNewUrlParser:true});
+mongoose.connect("mongodb+srv://admin:admin123@cluster0-7x4ot.mongodb.net/clientes", {useNewUrlParser:true});
 let db = mongoose.connection;
 db.on('error', console.log.bind(console, 'connection error: '))
 db.once('open', function(){

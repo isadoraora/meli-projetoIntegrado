@@ -1,6 +1,5 @@
 const Clientes = require('../models/clientes');
 const Joi = require('joi');
-const fs = require('fs');
 
 exports.get = (req, res) => {
     Clientes.find(function (err, clientes) {
@@ -61,32 +60,77 @@ exports.getClienteCpf = (req, res) => {
         res.status(200).send(cliente)
     })
 }
-const valida = (campos) => {
-    const schema = {
-        nome: Joi.string().min(1).required(),
-        email: Joi.string().min(1).required(),
-    }
-    const validation = Joi.validate(campos, schema);
-    if (validation.error) {
-        return false
-    }
-    return true;
-}
+// const valida = (campos) => {
+//     const schema = {
+//         nome: Joi.string().min(1).required(),
+//         email: Joi.string().min(1).required(),
+//     }
+//     const validation = Joi.validate(campos, schema);
+//     if (validation.error) {
+//         return false
+//     }
+//     return true;
+// }
 
+// exports.updateCliente = (req, res) => {
+//     if (!valida(req.body)) return res.status(400).send('Campos inválidos')
+
+//     Clientes.update(
+//         { cpf: req.params.cpf },
+//         { $set: req.body },
+//         { upsert: true },
+//         function (err) {
+//             if (err) return res.status(500).send(err)
+//             res.status(200).send({ mensagem: "Atualizado com sucesso" })
+//         }
+//     )
+// }
+// exports.deletarCliente = (req, res) =>{
+//     const idCliente
+// }
 exports.updateCliente = (req, res) => {
-    if (!valida(req.body)) return res.status(400).send('Campos inválidos')
+
+    if (!validaFormulario(req.body)) return res.status(400).send({ mensagem: "campos inválidos" });
 
     Clientes.update(
         { cpf: req.params.cpf },
         { $set: req.body },
         { upsert: true },
         function (err) {
-            if (err) return res.status(500).send(err)
-            res.status(200).send({ mensagem: "Atualizado com sucesso" })
-        }
-    )
+            if (err) return res.status(500).send(err);
+            res.status(200).send({ mensagem: "Atualizado com sucesso!" });
+        })
+
 }
 
-exports.deletarCliente = (req, res) =>{
-    const idCliente
+const validaFormulario = (campos) => {
+
+    const schema = {
+        nome: Joi.string().min(1).required(),
+        email: Joi.string().min(1).required(),
+    }
+
+    const validation = Joi.validate(campos, schema);
+
+    if (validation.error) {
+        return false;
+    }
+
+    return true;
+
+}
+exports.deletarCliente = (req, res) => {
+    const cpf = req.params.cpf;
+
+    Clientes.findOne({ cpf }, function (err, cliente) {
+        if (err) return res.status(500).send(err);
+
+        if (!cliente) return res.status(200).send({ mensagem: `Infelizmente não localizamos o cliente de cpf ${cpf}` })
+        cliente.remove(function (err) {
+            if (!err) {
+                res.status(200).send({ mensagem: "Cliente removida com sucesso!" })
+            }
+
+        })
+    })
 }
