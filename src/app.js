@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const bodyParser = require('body-parser');
+const sessions = require('./routes/sessionRoute')
 
 mongoose.connect("mongodb+srv://admin:admin123@cluster0-7x4ot.mongodb.net/clientes", {useNewUrlParser:true});
 let db = mongoose.connection;
@@ -26,5 +27,7 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.json())
 
-app.use("/clientes", clientes)
+app.use("/clientes", clientes);
+app.use("/sessions", sessions);
+
 module.exports = app;

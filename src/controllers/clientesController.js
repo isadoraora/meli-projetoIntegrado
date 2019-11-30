@@ -1,5 +1,8 @@
 const Clientes = require('../models/clientes');
 const Joi = require('joi');
+const bcryptjs = require('bcryptjs');
+const bcryptjSalt = 8;
+
 
 exports.get = (req, res) => {
     Clientes.find(function (err, clientes) {
@@ -18,6 +21,29 @@ exports.post = (req, res) => {
         });
     })
 }
+
+exports.post = (req, res) => {
+    const clientes = new Clientes({
+        nome,
+        email,
+        password,
+        cpf,
+        dataNascimento,
+        estadoCivil,
+        telefone,
+        comprou
+    });
+    clientes.save()
+        .then(data => {
+            res.status(201).send({
+                mensagem: 'Cadastro efetuado com sucesso'
+            });
+        }).catch(err => {
+            res.status(500).send({
+                mensagem: err.mensagem || 'Ocorreu um erro, tente novamente!'
+            })
+        })
+};
 
 // exports.getCompradoras = (req, res) => {
 //     Clientes.find(function (err, clientes) {
